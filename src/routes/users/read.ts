@@ -33,6 +33,24 @@ const validations: any = {
       },
     },
   },
+  page: {
+    optional: true,
+    isInt: true,
+    toInt: true,
+  },
+  pageSize: {
+    optional: true,
+    isInt: true,
+    toInt: true,
+  },
+  search: {
+    optional: true,
+
+    isLength: {
+      errorMessage: "Should be at least 1 char/s long and no more than 250.",
+      options: { min: 1, max: 250 },
+    },
+  },
 };
 
 /**
@@ -41,34 +59,40 @@ const validations: any = {
 const readRoute = {
   method: "get",
   path: "/users",
-  middleware: [checkSchema(validations), getRequestData, sendEvents],
+  middleware: [checkSchema(validations), getRequestData],
   routeHandler: async (options: any) => {
     // Extract data
     const { userWithSameUUID } = options.request;
+    const { page = 1, pageSize = 12, search } = options.data;
 
     // Get all users if not request for specific user
+    let skip = (page -1)* pageSize
+    let limit =  pageSize
     let users: any = [];
-
+    let filter: any = {};
+    let projection: any = {
+      _id: false,
+      uuid: true,
+      name: true,
+      email: true,
+      image: true,
+      phone: true,
+      last_login_at: true,
+      created_at: true,
+      updated_at: true,
+    };
+    let countTotal = 0;
+    
     if (!userWithSameUUID) {
+      if (search) filter = { email: {$regex : new RegExp(`${search}`, 'i')} };
+
       // Find
-      const usersCursors = await usersCollection.find(
-        {},
-        {
-          projection: {
-            _id: false,
-            uuid: true,
-            name: true,
-            email: true,
-            image: true,
-            phone: true,
-            last_login_at: true,
-
-            created_at: true,
-            updated_at: true,
-          },
-        }
-      );
-
+      let usersCursors = await usersCollection
+        .find(filter, { projection })
+        .skip(skip)
+        .limit(limit);
+      // @ts-ignore
+      countTotal = await usersCollection.countDocuments(filter);
       users = await usersCursors.toArray();
     }
 
@@ -78,6 +102,8 @@ const readRoute = {
       data: {
         users,
         user: userWithSameUUID,
+        maxPage: Math.ceil(countTotal / pageSize) ,
+        //countWithConstraints,
         message: `Hello from service ${SVC_NAME}`,
       },
     });

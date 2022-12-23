@@ -1,5 +1,5 @@
 import { Result } from "@merchandi/dmp-core-common-classes";
-import { getRequestData, sendEvents } from "../../middleware";
+import { getRequestData} from "../../middleware";
 import { SVC_NAME, mongoClient } from "../../config";
 import { checkSchema } from "express-validator";
 import { v4 as uuidv4 } from "uuid";
@@ -71,7 +71,7 @@ const validations: any = {
 const createRoute = {
   method: "post",
   path: "/users",
-  middleware: [checkSchema(validations), getRequestData, sendEvents],
+  middleware: [checkSchema(validations), getRequestData],
   routeHandler: async (options: any) => {
     // Extract data
     const { name, email, image, phone, last_login_at } = options.data;
@@ -91,20 +91,7 @@ const createRoute = {
     // Insert new user
     const confirmation = await usersCollection.insertOne(user);
 
-    // Define events
-    const events = [
-      {
-        kafka: true,
-        topic: "resources-users-created",
-        data: user,
-      },
-      {
-        pusher: true,
-        channel: "resources",
-        event: "users-created",
-        data: user,
-      },
-    ];
+   
 
     // Create result
     const handlerResult = new Result({
@@ -112,7 +99,6 @@ const createRoute = {
       data: {
         user,
         confirmation,
-        events,
         message: `Hello from service ${SVC_NAME}`,
       },
     });

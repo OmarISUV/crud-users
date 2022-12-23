@@ -1,6 +1,6 @@
 import { Result } from "@merchandi/dmp-core-common-classes";
-import { getRequestData, sendEvents } from "../../middleware";
-import { SVC_NAME } from "../../config";
+import { getRequestData } from "../../middleware";
+
 
 function bubbleSort(array:number[]):number[]{
     array = array.slice();
@@ -21,7 +21,7 @@ function bubbleSort(array:number[]):number[]{
 const bubbleRoute = {
   method: "post",
   path: "/bubble",
-  middleware: [getRequestData, sendEvents],
+  middleware: [getRequestData],
   routeHandler: async (options: any) => {
     // Extract data
     const arrayNumber = options.data.arrayNumber;

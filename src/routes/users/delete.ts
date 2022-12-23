@@ -1,5 +1,5 @@
 import { Result } from "@merchandi/dmp-core-common-classes";
-import { getRequestData, sendEvents } from "../../middleware";
+import { getRequestData} from "../../middleware";
 import { SVC_NAME, mongoClient } from "../../config";
 import { checkSchema } from "express-validator";
 
@@ -43,7 +43,7 @@ const validations: any = {
 const deleteRoute = {
   method: "delete",
   path: "/users",
-  middleware: [checkSchema(validations), getRequestData, sendEvents],
+  middleware: [checkSchema(validations), getRequestData],
   routeHandler: async (options: any) => {
     // Extract data
     const { userWithSameUUID } = options.request;
@@ -59,20 +59,7 @@ const deleteRoute = {
       uuid: userWithSameUUID.uuid,
     });
 
-    // Define events
-    const events = [
-      {
-        kafka: true,
-        topic: "resources-users-created",
-        data: userWithSameUUID,
-      },
-      {
-        pusher: true,
-        channel: "resources",
-        event: "users-created",
-        data: userWithSameUUID,
-      },
-    ];
+   
 
     // Create result
     const handlerResult = new Result({
@@ -82,7 +69,6 @@ const deleteRoute = {
           DBconfirmation,
           DBconfirmationMoved,
         },
-        events,
         message: `Hello from service ${SVC_NAME}`,
       },
     });

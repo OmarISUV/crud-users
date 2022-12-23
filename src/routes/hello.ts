@@ -1,5 +1,5 @@
 import { Result } from "@merchandi/dmp-core-common-classes";
-import { getRequestData, sendEvents } from "../middleware";
+import { getRequestData } from "../middleware";
 import { SVC_NAME } from "../config";
 
 /**
@@ -7,7 +7,7 @@ import { SVC_NAME } from "../config";
  */
 const helloRoute = {
   path: "/",
-  middleware: [getRequestData, sendEvents],
+  middleware: [getRequestData],
   routeHandler: async () => {
     // Create result
     const handlerResult = new Result({

@@ -1,5 +1,5 @@
 import { Result } from "@merchandi/dmp-core-common-classes";
-import { getRequestData, sendEvents } from "../../middleware";
+import { getRequestData} from "../../middleware";
 import { SVC_NAME, mongoClient } from "../../config";
 import { checkSchema } from "express-validator";
 
@@ -87,7 +87,7 @@ const validations: any = {
 const updateRoute = {
   method: "put",
   path: "/users",
-  middleware: [checkSchema(validations), getRequestData, sendEvents],
+  middleware: [checkSchema(validations), getRequestData],
   routeHandler: async (options: any) => {
     // Extract data
     const { uuid, name, email, image, phone, last_login_at } = options.data;
@@ -119,28 +119,12 @@ const updateRoute = {
     // Set user to document data
     user = value;
 
-    // Define events
-    const events = [
-      {
-        kafka: true,
-        topic: "resources-users-updated",
-        data: user,
-      },
-      {
-        pusher: true,
-        channel: "resources",
-        event: "users-updated",
-        data: user,
-      },
-    ];
-
     // Create result
     const handlerResult = new Result({
       success: true,
       data: {
         user,
         confirmation,
-        events,
         message: `Hello from service ${SVC_NAME}`,
       },
     });

@@ -1,6 +1,5 @@
 import { Result } from "@merchandi/dmp-core-common-classes";
-import { getRequestData, sendEvents } from "../../middleware";
-import { SVC_NAME } from "../../config";
+import { getRequestData} from "../../middleware";
 
 /**
  * Palindrome
@@ -18,7 +17,7 @@ const isPalindrome = (phrase: string): string => {
 const palidromeRoute = {
   method: "post",
   path: "/palindromo",
-  middleware: [getRequestData, sendEvents],
+  middleware: [getRequestData],
   routeHandler: async (options: any) => {
     // Extract data
     

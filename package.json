@@ -35,14 +35,12 @@
   },
   "dependencies": {
     "@merchandi/dmp-core-common-classes": "^0.0.1",
-    "@upstash/kafka": "^1.3.1",
     "@vendia/serverless-express": "^4.10.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-validator": "^6.14.2",
     "mongodb": "^4.10.0",
-    "pusher": "^5.1.1-beta",
     "uuid": "^9.0.0"
   }
 }
