@@ -2,6 +2,7 @@
 import express from "express";
 import routes from "./routes";
 import { Result } from "@merchandi/dmp-core-common-classes";
+import cors from "cors";
 
 // Service
 const service: any = express();
@@ -9,7 +10,8 @@ const service: any = express();
 // Default global middleware
 service.use(express.json()); // Parse body for POST
 service.use(express.urlencoded({ extended: true })); // Parse body for PUT
-
+service.use(cors());
+service.disable('x-powered-by');
 // Load routes
 for (let i = 0; i < routes.length; i++) {
   // Get route
@@ -58,6 +60,7 @@ for (let i = 0; i < routes.length; i++) {
     }
   );
 }
+
 
 // Export service
 export default service;
